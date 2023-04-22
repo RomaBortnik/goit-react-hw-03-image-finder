@@ -4,7 +4,6 @@ import ImageGalleryItem from 'components/ImageGalleryItem';
 import Gallery from './ImageGallery.styled';
 
 const ImageGallery = ({ images, showModal }) => {
-  console.log(images);
   return (
     <Gallery>
       {images.map(image => {
