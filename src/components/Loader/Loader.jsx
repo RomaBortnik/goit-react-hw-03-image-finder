@@ -8,8 +8,19 @@ const Loader = () => {
       color="#fff"
       ariaLabel="tail-spin-loading"
       radius="1"
-      wrapperStyle={{}}
-      wrapperClass="Overlay"
+      wrapperStyle={{
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        width: '100vw',
+        height: '100vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+        zIndex: '1200',
+      }}
+      wrapperClass=""
       visible={true}
     />
   );

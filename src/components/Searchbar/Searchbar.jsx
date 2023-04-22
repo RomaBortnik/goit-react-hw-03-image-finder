@@ -1,5 +1,13 @@
-import { Formik, Form, Field } from 'formik';
+import { Formik } from 'formik';
 import { AiOutlineSearch } from 'react-icons/ai';
+import PropTypes from 'prop-types';
+
+import {
+  Header,
+  SearchbarForm,
+  SearchbarInput,
+  SearchbarBtn,
+} from './Searchbar.styled';
 
 const initialValues = {
   query: '',
@@ -16,25 +24,29 @@ const Searchbar = ({ searchQuery, onSubmit }) => {
   };
 
   return (
-    <header className="Searchbar">
+    <Header>
       <Formik initialValues={initialValues} onSubmit={handleSubmit}>
-        <Form className="SearchForm">
-          <button type="submit" className="SearchForm-button">
+        <SearchbarForm>
+          <SearchbarBtn type="submit">
             <AiOutlineSearch color="black" size="1.5rem" />
-          </button>
+          </SearchbarBtn>
 
-          <Field
-            className="SearchForm-input"
+          <SearchbarInput
             type="text"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
             name="query"
           />
-        </Form>
+        </SearchbarForm>
       </Formik>
-    </header>
+    </Header>
   );
+};
+
+Searchbar.propTypes = {
+  searchQuery: PropTypes.string.isRequired,
+  onSubmit: PropTypes.func.isRequired,
 };
 
 export default Searchbar;

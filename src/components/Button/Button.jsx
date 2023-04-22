@@ -1,9 +1,17 @@
+import PropTypes from 'prop-types';
+
+import SubmitButton from './Button.styled';
+
 const Button = ({ onClick }) => {
   return (
-    <button className="Button" type="button" onClick={onClick}>
+    <SubmitButton type="button" onClick={onClick}>
       Load more
-    </button>
+    </SubmitButton>
   );
+};
+
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
 };
 
 export default Button;
