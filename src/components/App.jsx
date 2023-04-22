@@ -22,34 +22,40 @@ const INITIAL_STATE = {
 export class App extends Component {
   state = { ...INITIAL_STATE };
 
-  async componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps, prevState) {
     const { query, pageNumber } = this.state;
 
     if (query !== prevState.query) {
       this.setState({ status: 'pending' });
-      const data = await fetchImages(query, pageNumber);
-      return data.hits.length === 0
-        ? this.setState({ status: 'rejected' })
-        : this.setState({
-            ...INITIAL_STATE,
-            query,
-            images: data.hits,
-            imagesPerPage: data.hits.length,
-            totalImages: data.totalHits,
-            status: 'resolved',
-          });
+      fetchImages(query, pageNumber)
+        .then(data =>
+          data.hits.length === 0
+            ? this.setState({ status: 'rejected' })
+            : this.setState({
+                ...INITIAL_STATE,
+                query,
+                images: data.hits,
+                imagesPerPage: data.hits.length,
+                totalImages: data.totalHits,
+                status: 'resolved',
+              })
+        )
+        .catch(() => this.setState({ status: 'rejected' }));
     }
 
     if (pageNumber !== prevState.pageNumber && query === prevState.query) {
-      await this.setState({ isLoading: true });
-      const data = await fetchImages(query, pageNumber);
-      this.setState(prevState => {
-        return {
-          images: [...prevState.images, ...data.hits],
-          imagesPerPage: data.hits.length,
-          isLoading: false,
-        };
-      });
+      this.setState({ isLoading: true });
+      fetchImages(query, pageNumber)
+        .then(data =>
+          this.setState(prevState => {
+            return {
+              images: [...prevState.images, ...data.hits],
+              imagesPerPage: data.hits.length,
+              isLoading: false,
+            };
+          })
+        )
+        .catch(() => this.setState({ status: 'rejected' }));
     }
   }
 
