@@ -1,52 +1,40 @@
-import { Component } from 'react';
+import { Formik, Form, Field } from 'formik';
+import { AiOutlineSearch } from 'react-icons/ai';
 
-class Searchbar extends Component {
-  state = {
-    query: '',
-  };
+const initialValues = {
+  query: '',
+};
 
-  handleChange = e => {
-    this.setState({ query: e.target.value });
-  };
-
-  handleSubmit = e => {
-    e.preventDefault();
-    const { searchQuery, onSubmit } = this.props;
-    const { query } = this.state;
-    if (searchQuery === query) {
+const Searchbar = ({ searchQuery, onSubmit }) => {
+  const handleSubmit = (values, { resetForm }) => {
+    const { query } = values;
+    if (searchQuery === query || query === '') {
       return;
     }
     onSubmit(query);
-    this.setState({ query: '' });
+    resetForm();
   };
 
-  render() {
-    const { query } = this.state;
-
-    return (
-      <header className="Searchbar">
-        <form className="SearchForm" onSubmit={this.handleSubmit}>
-          <button
-            disabled={query === ''}
-            type="submit"
-            className="SearchForm-button"
-          >
-            <span className="SearchForm-button-label">Search</span>
+  return (
+    <header className="Searchbar">
+      <Formik initialValues={initialValues} onSubmit={handleSubmit}>
+        <Form className="SearchForm">
+          <button type="submit" className="SearchForm-button">
+            <AiOutlineSearch color="black" size="1.5rem" />
           </button>
 
-          <input
+          <Field
             className="SearchForm-input"
             type="text"
             autoComplete="off"
             autoFocus
             placeholder="Search images and photos"
-            value={query}
-            onChange={this.handleChange}
+            name="query"
           />
-        </form>
-      </header>
-    );
-  }
-}
+        </Form>
+      </Formik>
+    </header>
+  );
+};
 
 export default Searchbar;

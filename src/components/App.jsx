@@ -5,7 +5,7 @@ import ImageGallery from './ImageGallery';
 import fetchImages from 'services/pixabay-api';
 import Button from './Button';
 import Modal from './Modal';
-// import { TailSpin } from 'react-loader-spinner';
+import Loader from './Loader';
 
 const INITIAL_STATE = {
   query: '',
@@ -14,38 +14,42 @@ const INITIAL_STATE = {
   totalImages: null,
   pageNumber: 1,
   showModal: false,
+  isLoading: false,
   currentImage: null,
+  status: 'idle',
 };
 
 export class App extends Component {
   state = { ...INITIAL_STATE };
 
-  componentDidUpdate(prevProps, prevState) {
+  async componentDidUpdate(prevProps, prevState) {
     const { query, pageNumber } = this.state;
+
     if (query !== prevState.query) {
-      fetchImages(query, pageNumber)
-        .then(data => {
-          this.setState({
+      this.setState({ status: 'pending' });
+      const data = await fetchImages(query, pageNumber);
+      return data.hits.length === 0
+        ? this.setState({ status: 'rejected' })
+        : this.setState({
+            ...INITIAL_STATE,
             query,
             images: data.hits,
             imagesPerPage: data.hits.length,
             totalImages: data.totalHits,
-            pageNumber: 1,
+            status: 'resolved',
           });
-        })
-        .catch(console.log);
     }
+
     if (pageNumber !== prevState.pageNumber && query === prevState.query) {
-      fetchImages(query, pageNumber)
-        .then(data => {
-          this.setState(prevState => {
-            return {
-              images: [...prevState.images, ...data.hits],
-              imagesPerPage: data.hits.length,
-            };
-          });
-        })
-        .catch(console.log);
+      await this.setState({ isLoading: true });
+      const data = await fetchImages(query, pageNumber);
+      this.setState(prevState => {
+        return {
+          images: [...prevState.images, ...data.hits],
+          imagesPerPage: data.hits.length,
+          isLoading: false,
+        };
+      });
     }
   }
 
@@ -69,38 +73,64 @@ export class App extends Component {
   };
 
   render() {
-    const { query, images, imagesPerPage, showModal, currentImage } =
-      this.state;
-    console.log(this.state);
-    return (
-      <>
+    const {
+      query,
+      images,
+      imagesPerPage,
+      showModal,
+      currentImage,
+      isLoading,
+      status,
+    } = this.state;
+
+    if (status === 'idle') {
+      return (
         <Searchbar
           searchQuery={query}
           onSubmit={this.getSearchQuery}
         ></Searchbar>
-        <ImageGallery
-          images={images}
-          showModal={this.toggleModal}
-        ></ImageGallery>
-        {imagesPerPage === 12 ? (
-          <Button onClick={this.onLoadMoreClick}></Button>
-        ) : null}
-        {showModal && (
-          <Modal image={currentImage} onClose={this.toggleModal}></Modal>
-        )}
-        {/* {isLoading && (
-          <TailSpin
-            height="60"
-            width="60"
-            color="#000"
-            ariaLabel="tail-spin-loading"
-            radius="1"
-            wrapperStyle={{}}
-            wrapperClass="Overlay"
-            visible={true}
-          />
-        )} */}
-      </>
-    );
+      );
+    }
+
+    if (status === 'pending') {
+      return <Loader></Loader>;
+    }
+
+    if (status === 'resolved') {
+      return (
+        <>
+          <Searchbar
+            searchQuery={query}
+            onSubmit={this.getSearchQuery}
+          ></Searchbar>
+          <ImageGallery
+            images={images}
+            showModal={this.toggleModal}
+          ></ImageGallery>
+          {imagesPerPage === 12 ? (
+            <Button onClick={this.onLoadMoreClick}></Button>
+          ) : null}
+          {isLoading && <Loader></Loader>}
+          {showModal && (
+            <Modal image={currentImage} onClose={this.toggleModal}></Modal>
+          )}
+        </>
+      );
+    }
+
+    if (status === 'rejected') {
+      return (
+        <>
+          <Searchbar
+            searchQuery={query}
+            onSubmit={this.getSearchQuery}
+          ></Searchbar>
+          <p className="text">
+            Sorry, there are no images matching your search query. Please try
+            again.
+          </p>
+        </>
+      );
+    }
   }
 }
