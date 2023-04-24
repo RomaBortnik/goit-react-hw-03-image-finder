@@ -39,4 +39,7 @@ img {
   text-align: center;
   font-size: 32px;
   font-weight: 500;
+  width: 1000px;
+  margin: 0 auto;
+  line-height: 1.5;
 }

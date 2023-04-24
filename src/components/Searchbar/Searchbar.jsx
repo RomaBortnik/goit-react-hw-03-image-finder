@@ -13,14 +13,13 @@ const initialValues = {
   query: '',
 };
 
-const Searchbar = ({ searchQuery, onSubmit }) => {
+const Searchbar = ({ onSubmit }) => {
   const handleSubmit = (values, { resetForm }) => {
     const { query } = values;
-    if (searchQuery === query || query === '') {
-      return;
+    if (query.trim() !== '') {
+      onSubmit(query);
+      resetForm();
     }
-    onSubmit(query);
-    resetForm();
   };
 
   return (
@@ -45,7 +44,6 @@ const Searchbar = ({ searchQuery, onSubmit }) => {
 };
 
 Searchbar.propTypes = {
-  searchQuery: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
 
