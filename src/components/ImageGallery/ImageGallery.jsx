@@ -34,7 +34,7 @@ ImageGallery.propTypes = {
     })
   ).isRequired,
   showModal: PropTypes.func.isRequired,
-  imagesPerPage: PropTypes.string.isRequired,
+  imagesPerPage: PropTypes.number.isRequired,
   onClick: PropTypes.func.isRequired,
 };
 

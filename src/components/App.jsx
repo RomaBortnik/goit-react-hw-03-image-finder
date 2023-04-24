@@ -10,7 +10,6 @@ const INITIAL_STATE = {
   query: '',
   images: [],
   imagesPerPage: 0,
-  totalImages: null,
   pageNumber: 1,
   showModal: false,
   currentImage: null,
@@ -34,7 +33,6 @@ export class App extends Component {
                 query,
                 images: data.hits,
                 imagesPerPage: data.hits.length,
-                totalImages: data.totalHits,
                 status: 'resolved',
               })
         )
