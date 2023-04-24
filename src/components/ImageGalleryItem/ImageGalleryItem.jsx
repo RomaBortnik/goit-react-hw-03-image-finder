@@ -2,10 +2,10 @@ import PropTypes from 'prop-types';
 
 import { GalleryItem, GalleryImage } from './ImageGalleryItem.styled';
 
-const ImageGalleryItem = ({ smallImage, largeImage, showModal }) => {
+const ImageGalleryItem = ({ smallImage, largeImage, tags, openModal }) => {
   return (
-    <GalleryItem onClick={() => showModal(largeImage)}>
-      <GalleryImage src={smallImage} alt="" loading="lazy" />
+    <GalleryItem onClick={() => openModal(largeImage, tags)}>
+      <GalleryImage src={smallImage} alt={tags} loading="lazy" />
     </GalleryItem>
   );
 };
@@ -13,7 +13,8 @@ const ImageGalleryItem = ({ smallImage, largeImage, showModal }) => {
 ImageGalleryItem.propTypes = {
   smallImage: PropTypes.string.isRequired,
   largeImage: PropTypes.string.isRequired,
-  showModal: PropTypes.func.isRequired,
+  openModal: PropTypes.func.isRequired,
+  tags: PropTypes.string.isRequired,
 };
 
 export default ImageGalleryItem;

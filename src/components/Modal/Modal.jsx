@@ -17,6 +17,7 @@ class Modal extends Component {
   static propTypes = {
     image: PropTypes.string.isRequired,
     onClose: PropTypes.func.isRequired,
+    tags: PropTypes.string.isRequired,
   };
 
   handleKeydown = e => {
@@ -32,11 +33,11 @@ class Modal extends Component {
   };
 
   render() {
-    const { image } = this.props;
+    const { image, tags } = this.props;
     return createPortal(
       <Overlay onClick={this.handleBackdropClick}>
         <ModalImage className="Modal">
-          <img src={image} alt="" />
+          <img src={image} alt={tags} />
         </ModalImage>
       </Overlay>,
       modalRoot
